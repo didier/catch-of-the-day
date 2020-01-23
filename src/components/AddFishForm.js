@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 class AddFishForm extends Component {
+
   nameRef = React.createRef()
   priceRef = React.createRef()
   statusRef = React.createRef()
@@ -11,15 +12,18 @@ class AddFishForm extends Component {
   createFish = event => {
     event.preventDefault()
 
+    // Make new fish object from form data
     const fish = {
-      nameRef: this.nameRef.current.value,
-      priceRef: parseFloat(this.priceRef.current.value),
-      statusRef: this.statusRef.current.value,
-      descRef: this.descRef.current.value,
-      imageRef: this.imageRef.current.value,
+      name: this.nameRef.current.value,
+      price: parseFloat(this.priceRef.current.value),
+      status: this.statusRef.current.value,
+      desc: this.descRef.current.value,
+      image: this.imageRef.current.value,
     }
 
     this.props.addFish(fish)
+
+    // Reset form
     event.currentTarget.reset()
   }
 

@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { formatPrice } from '../helpers'
 class Fish extends Component {
   render() {
-    const index = this.props.index
+    // Destructure details to separate variables
     const { image, name, price, desc, status } = this.props.details
+    // Check availability
     const isAvailable = status === 'available'
 
     return (
@@ -14,8 +15,8 @@ class Fish extends Component {
         </h3>
         <p>{desc}</p>
         <button
-          onClick={this.props.addToOrder(index)}
           disabled={!isAvailable}
+          onClick={() => this.props.addToOrder(this.props.index)}
           className="order">
           {isAvailable ? 'Add to order' : 'Sold out'}
         </button>
