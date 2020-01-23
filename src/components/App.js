@@ -31,7 +31,7 @@ class App extends Component {
     order[key] = order[key] + 1 || 1
 
     // Set to state
-    // this.setState({ order })
+    this.setState({ order })
 
   }
   render() {
