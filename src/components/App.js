@@ -5,6 +5,7 @@ import Order from './Order'
 import Fish from './Fish'
 import sampleFishes from '../sample-fishes'
 import base from '../base'
+import PropTypes from 'prop-types'
 
 
 class App extends Component {
@@ -15,9 +16,22 @@ class App extends Component {
     order: {}
   }
 
+  static propTypes = {
+    match: PropTypes.object
+  }
+
   componentDidMount() {
     // Sync state with firebase
     const { params } = this.props.match
+
+    // Check if localstorage exists, else sync to this.state.
+    const localStorageRef = localStorage.getItem(params.storeId)
+    if (localStorageRef) {
+      this.setState({
+        order: JSON.parse(localStorageRef)
+      })
+    }
+
     this.ref = base.syncState(`${params.storeId}/fishes`, {
       context: this,
       state: 'fishes'
@@ -25,11 +39,12 @@ class App extends Component {
   }
 
   componentDidUpdate() {
-    console.log('Updated');
+    // Update localstorage with storeID and current order state
     localStorage.setItem(this.props.match.params.storeId, JSON.stringify(this.state.order))
   }
 
   componentWillUnmount() {
+    // Remove binding from firebase right before unmount to prevent memory leak
     base.removeBinding(this.ref)
   }
 
@@ -45,10 +60,27 @@ class App extends Component {
     this.setState({ fishes })
   }
 
+  updateFish = (key, updatedFish) => {
+    // 1. Copy current state
+    const fishes = { ...this.state.fishes }
+    // 2. Update that state
+    fishes[key] = updatedFish
+    // 3. Set that to state
+    this.setState({ fishes })
+  }
+
+  deleteFish = (key) => {
+    // Copy state
+    const fishes = { ...this.state.fishes }
+    // Update the state
+    fishes[key] = null
+    // 3. Set that to state
+    this.setState({ fishes })
+  }
+
   loadSampleFishes = () => {
     this.setState({ fishes: sampleFishes })
   }
-
 
   addToOrder = (key) => {
     // Take a copy of State
@@ -61,6 +93,13 @@ class App extends Component {
     this.setState({ order })
 
   }
+
+  removeFromOrder = (key) => {
+    const order = { ...this.state.order }
+    delete order[key]
+    this.setState({ order })
+  }
+
   render() {
     return (
       <div className="catch-of-the-day">
@@ -76,8 +115,20 @@ class App extends Component {
             ))}
           </ul>
         </div>
-        <Order fishes={this.state.fishes} order={this.state.order} />
-        <Inventory addFish={this.addFish} loadSampleFishes={this.loadSampleFishes} />
+
+        <Order
+          fishes={this.state.fishes}
+          order={this.state.order}
+          removeFromOrder={this.removeFromOrder}
+        />
+        <Inventory
+          addFish={this.addFish}
+          updateFish={this.updateFish}
+          deleteFish={this.deleteFish}
+          loadSampleFishes={this.loadSampleFishes}
+          fishes={this.state.fishes}
+          storeId={this.props.match.params.storeId}
+        />
       </div>
     )
   }

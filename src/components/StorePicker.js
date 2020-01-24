@@ -1,17 +1,20 @@
 import React from 'react';
 import { getFunName } from '../helpers';
-// import { render } from 'react-dom';
+import PropTypes from 'prop-types'
 
 class StorePicker extends React.Component {
   myInput = React.createRef()
+
+
+  static propTypes = {
+    history: PropTypes.object,
+  }
 
   goToStore = event => {
     event.preventDefault()
     console.log('Going to store!');
     const storeName = this.myInput.current.value
     this.props.history.push(`/store/${storeName}`)
-
-
   }
 
   render() {

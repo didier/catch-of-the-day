@@ -1,6 +1,18 @@
 import React, { Component } from 'react'
 import { formatPrice } from '../helpers'
+import PropTypes from 'prop-types'
+
 class Fish extends Component {
+  static propTypes = {
+    details: PropTypes.shape({
+      image: PropTypes.string,
+      name: PropTypes.string,
+      desc: PropTypes.string,
+      status: PropTypes.string,
+      price: PropTypes.number
+    }),
+    addToOrder: PropTypes.func
+  }
   render() {
     // Destructure details to separate variables
     const { image, name, price, desc, status } = this.props.details
